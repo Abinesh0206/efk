@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elasticsearch
+spec:
+  replicas: {{ .Values.elasticsearch.replicaCount }}
+  selector:
+    matchLabels:
+      app: elasticsearch
+  template:
+    metadata:
+      labels:
+        app: elasticsearch
+    spec:
+      containers:
+        - name: elasticsearch
+          image: {{ .Values.elasticsearch.image }}
+          resources:
+            {{- toYaml .Values.elasticsearch.resources | nindent 12 }}
+          ports:
+            - containerPort: 9200
+          volumeMounts:
+            - name: storage
+              mountPath: /usr/share/elasticsearch/data
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: elasticsearch-pvc
