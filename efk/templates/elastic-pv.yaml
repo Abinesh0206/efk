@@ -4,23 +4,10 @@ metadata:
   name: elasticsearch-pv
 spec:
   capacity:
-    storage: 10Gi  # Same as PVC
+    storage: 10Gi
   volumeMode: Filesystem
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   hostPath:
-    path: "/mnt/elasticsearch-data"  # Change this path based on your setup
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: elasticsearch-pvc
-  namespace: default
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 10Gi
-  volumeName: elasticsearch-pv
+    path: "/mnt/elasticsearch-data"  # Correct path
