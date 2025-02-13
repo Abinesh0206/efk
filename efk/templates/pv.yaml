@@ -10,4 +10,5 @@ spec:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   hostPath:
-    path: "/mnt/elasticsearch-data"  # Correct path
+    path: "/mnt/elasticsearch-data"  # Ensure this is the correct path
+
