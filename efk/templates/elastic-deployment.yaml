@@ -16,12 +16,12 @@ spec:
         - name: elasticsearch
           image: {{ .Values.elasticsearch.image }}
           resources:
-            limits:
-              memory: 4Gi
-              cpu: "2"
             requests:
-              memory: 2Gi
-              cpu: "1"
+              memory: "2Gi"
+              cpu: "500m"
+            limits:
+              memory: "4Gi"
+              cpu: "1000m"
           ports:
             - containerPort: 9200
           volumeMounts:
