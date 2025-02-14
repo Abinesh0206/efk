@@ -7,7 +7,7 @@ elasticsearch:
       cpu: "500m"
     limits:
       memory: "4Gi"
-      cpu: "2"
+      cpu: "1000m"
   storage:
     size: 10Gi
     accessMode: ReadWriteOnce
