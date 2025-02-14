@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: elasticsearch
+  labels:
+    app: elasticsearch
 spec:
   replicas: {{ .Values.elasticsearch.replicaCount }}
   selector:
@@ -14,20 +16,25 @@ spec:
     spec:
       containers:
         - name: elasticsearch
-          image: {{ .Values.elasticsearch.image }}
-          resources:
-            requests:
-              memory: "2Gi"
-              cpu: "500m"
-            limits:
-              memory: "4Gi"
-              cpu: "1000m"
+          image: "{{ .Values.elasticsearch.image }}"
           ports:
             - containerPort: 9200
+          env:
+            {{- range .Values.elasticsearch.extraEnvs }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
+          resources:
+            requests:
+              memory: "{{ .Values.elasticsearch.resources.requests.memory }}"
+              cpu: "{{ .Values.elasticsearch.resources.requests.cpu }}"
+            limits:
+              memory: "{{ .Values.elasticsearch.resources.limits.memory }}"
+              cpu: "{{ .Values.elasticsearch.resources.limits.cpu }}"
           volumeMounts:
-            - name: storage
+            - name: elasticsearch-storage
               mountPath: /usr/share/elasticsearch/data
       volumes:
-        - name: storage
+        - name: elasticsearch-storage
           persistentVolumeClaim:
             claimName: elasticsearch-pvc
