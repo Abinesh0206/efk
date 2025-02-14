@@ -9,5 +9,5 @@ spec:
   resources:
     requests:
       storage: 10Gi
-  storageClassName: elasticsearch-storage
+  storageClassName: "gp2"
   volumeName: elasticsearch-pv  # This must match the PV name
