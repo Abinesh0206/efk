@@ -2,12 +2,15 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: elasticsearch-pv
+  labels:
+    app: elasticsearch
 spec:
   capacity:
-    storage: {{ .Values.elasticsearch.storage.size }}
+    storage: 10Gi
+  volumeMode: Filesystem
   accessModes:
-    - {{ .Values.elasticsearch.storage.accessMode }}
+    - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: {{ .Values.elasticsearch.storage.storageClassName }}
+  storageClassName: elasticsearch-storage
   hostPath:
-    path: "/mnt/data/elasticsearch"
+    path: "/mnt/elasticsearch-data"  # Ensure this path exists on the worker node
