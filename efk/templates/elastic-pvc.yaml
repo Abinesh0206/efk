@@ -2,10 +2,12 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: elasticsearch-pvc
+  namespace: efk  # Make sure this matches your Elasticsearch namespace
 spec:
   accessModes:
-    - {{ .Values.elasticsearch.storage.accessMode }}
+    - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.elasticsearch.storage.size }}
-  storageClassName: {{ .Values.elasticsearch.storage.storageClassName }}
+      storage: 10Gi
+  storageClassName: elasticsearch-storage
+  volumeName: elasticsearch-pv  # This must match the PV name
