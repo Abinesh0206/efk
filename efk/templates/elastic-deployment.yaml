@@ -14,8 +14,15 @@ spec:
       labels:
         app: elasticsearch
     spec:
+      securityContext:  # ✅ Added security context for the pod
+        fsGroup: 1000
       containers:
         - name: elasticsearch
+          securityContext:  # ✅ Added security context for the container
+            runAsUser: 1000
+            runAsGroup: 1000
+            privileged: false
+            allowPrivilegeEscalation: false
           image: "{{ .Values.elasticsearch.image }}"
           ports:
             - containerPort: 9200
@@ -38,13 +45,3 @@ spec:
         - name: elasticsearch-storage
           persistentVolumeClaim:
             claimName: elasticsearch-pvc
-spec:
-  securityContext:
-    fsGroup: 1000
-  containers:
-    - name: elasticsearch
-      securityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
-        privileged: false
-        allowPrivilegeEscalation: false
