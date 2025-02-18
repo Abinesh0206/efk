@@ -1,6 +1,7 @@
 elasticsearch:
   replicaCount: 1
-  image: "docker.elastic.co/elasticsearch/elasticsearch:8.5.1"
+  image: "docker.elastic.co/elasticsearch"
+  tag: "latest"
   resources:
     requests:
       memory: "2Gi"
