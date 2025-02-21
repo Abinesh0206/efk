@@ -12,6 +12,21 @@ spec:
       labels:
         app: vault
     spec:
+      securityContext:
+        capabilities:
+          add: ["IPC_LOCK"]
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox
+          command: ['sh', '-c', 'until nc -z postgres 5432; do sleep 2; done']
+        - name: copy-config
+          image: busybox
+          command: ["/bin/sh", "-c", "cp /config/* /vault/config/"]
+          volumeMounts:
+            - name: vault-config
+              mountPath: /vault/config
+            - name: config-source
+              mountPath: /config
       containers:
         - name: vault
           image: {{ .Values.vault.image }}
@@ -23,6 +38,8 @@ spec:
             - name: vault-config
               mountPath: /vault/config
       volumes:
-        - name: vault-config
+        - name: config-source
           configMap:
             name: vault-config
+        - name: vault-config
+          emptyDir: {}
