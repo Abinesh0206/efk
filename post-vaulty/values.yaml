@@ -15,3 +15,11 @@ vault:
   ingress:
     enabled: true
     host: vault.example.com
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "256Mi"
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
