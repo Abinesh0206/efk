@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: vault
+  labels:
+    app: vault
 spec:
   replicas: 1
   selector:
@@ -29,11 +31,14 @@ spec:
               mountPath: /config
       containers:
         - name: vault
-          image: {{ .Values.vault.image }}
+          image: hashicorp/vault:latest
+          imagePullPolicy: IfNotPresent
           args: ["server"]
           env:
             - name: VAULT_ADDR
               value: "http://127.0.0.1:8200"
+          ports:
+            - containerPort: 8200
           volumeMounts:
             - name: vault-config
               mountPath: /vault/config
