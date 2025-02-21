@@ -15,6 +15,9 @@ vault:
   ingress:
     enabled: true
     host: vault.example.com
+  storage:
+    postgresql:
+      connection_url: "postgres://vaultuser:vaultpass@postgres:5432/vault?sslmode=disable"
 
 resources:
   requests:
