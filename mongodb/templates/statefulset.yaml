@@ -22,6 +22,7 @@ spec:
           volumeMounts:
             - name: keyfile-secret
               mountPath: /etc/secrets
+              readOnly: true  # Ensure this volume is mounted as read-only
       containers:
         - name: mongo
           image: {{ .Values.mongoImage }}
@@ -50,7 +51,7 @@ spec:
               mountPath: /data/db
             - name: keyfile-secret
               mountPath: /etc/secrets
-              readOnly: true
+              readOnly: true  # Ensure this volume is mounted as read-only
             - name: mongo-init-script
               mountPath: /docker-entrypoint-initdb.d
       volumes:
@@ -60,7 +61,7 @@ spec:
         - name: keyfile-secret
           secret:
             secretName: mongo-keyfile
-            defaultMode: 0600
+            defaultMode: 0600  # Ensure the secret has proper permissions
   volumeClaimTemplates:
     - metadata:
         name: mongo-persistent-storage
