@@ -14,12 +14,14 @@ spec:
         app: mongo
     spec:
       initContainers:
-        - name: fix-keyfile-permissions
-          image: busybox
-          command: ["sh", "-c", "chmod 600 /etc/secrets/mongodb-keyfile"]
-          volumeMounts:
-            - name: keyfile-secret
-              mountPath: /etc/secrets
+  - name: fix-keyfile-permissions
+    image: busybox
+    command: ["sh", "-c", "chmod 600 /etc/secrets/mongodb-keyfile"]
+    securityContext:
+      privileged: true  # Allow initContainer to run with elevated privileges
+    volumeMounts:
+      - name: keyfile-secret
+        mountPath: /etc/secrets
       containers:
         - name: mongo
           image: {{ .Values.mongoImage }}
@@ -58,7 +60,7 @@ spec:
         - name: keyfile-secret
           secret:
             secretName: mongo-keyfile
-            defaultMode: 0400
+            defaultMode: 0600
   volumeClaimTemplates:
     - metadata:
         name: mongo-persistent-storage
