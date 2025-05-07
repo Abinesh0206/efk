@@ -20,6 +20,9 @@ spec:
             - "--replSet"
             - "rs0"
             - "--bind_ip_all"
+            - "--auth"
+            - "--keyFile"
+            - "/etc/secrets/mongodb-keyfile"
           ports:
             - containerPort: 27017
           env:
@@ -36,10 +39,17 @@ spec:
           volumeMounts:
             - name: mongo-persistent-storage
               mountPath: /data/db
+            - name: keyfile-secret
+              mountPath: /etc/secrets
+              readOnly: true
       volumes:
         - name: mongo-init-script
           configMap:
             name: mongo-init-script
+        - name: keyfile-secret
+          secret:
+            secretName: mongo-keyfile
+            defaultMode: 0400
 
   volumeClaimTemplates:
     - metadata:
