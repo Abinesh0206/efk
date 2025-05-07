@@ -1,0 +1,9 @@
+replicaCount: 3
+mongoImage: mongo:7.0.5
+
+auth:
+  rootUsername: root
+  rootPassword: changeme
+
+storage:
+  size: 10Gi

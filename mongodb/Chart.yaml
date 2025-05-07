@@ -1,0 +1,6 @@
+apiVersion: v2
+name: custom-mongodb
+description: A custom MongoDB replica set chart using the official MongoDB image
+type: application
+version: 0.1.0
+appVersion: "7.0.5"
