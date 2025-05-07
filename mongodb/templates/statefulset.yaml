@@ -16,13 +16,16 @@ spec:
       initContainers:
         - name: fix-keyfile-permissions
           image: busybox
-          command: ["sh", "-c", "chmod 600 /etc/secrets/mongodb-keyfile"]
+          command: ["sh", "-c", "cp /etc/secrets/mongodb-keyfile /mnt/keyfile && chmod 600 /mnt/keyfile && mv /mnt/keyfile /etc/secrets/mongodb-keyfile"]
           securityContext:
             privileged: true  # Allow initContainer to run with elevated privileges
           volumeMounts:
             - name: keyfile-secret
               mountPath: /etc/secrets
-              readOnly: true  # Ensure this volume is mounted as read-only
+              readOnly: true  # The secret is still read-only
+            - name: temp-keyfile
+              mountPath: /mnt/keyfile  # Temporary location for the keyfile to modify
+              readOnly: false  # Allow write access here to change permissions
       containers:
         - name: mongo
           image: {{ .Values.mongoImage }}
@@ -51,16 +54,9 @@ spec:
               mountPath: /data/db
             - name: keyfile-secret
               mountPath: /etc/secrets
-              readOnly: true  # Ensure this volume is mounted as read-only
+              readOnly: true  # The secret is still mounted as read-only
             - name: mongo-init-script
               mountPath: /docker-entrypoint-initdb.d
-          lifecycle:
-            postStart:
-              exec:
-                command:
-                  - "sh"
-                  - "-c"
-                  - "chmod 600 /etc/secrets/mongodb-keyfile"
       volumes:
         - name: mongo-init-script
           configMap:
@@ -69,6 +65,8 @@ spec:
           secret:
             secretName: mongo-keyfile
             defaultMode: 0600  # Ensure the secret has proper permissions
+        - name: temp-keyfile
+          emptyDir: {}  # Temporary volume to work with keyfile
   volumeClaimTemplates:
     - metadata:
         name: mongo-persistent-storage
