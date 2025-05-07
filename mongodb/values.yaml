@@ -7,3 +7,4 @@ auth:
 
 storage:
   size: 10Gi
+  class: gp2
