@@ -54,6 +54,13 @@ spec:
               readOnly: true  # Ensure this volume is mounted as read-only
             - name: mongo-init-script
               mountPath: /docker-entrypoint-initdb.d
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - "sh"
+                  - "-c"
+                  - "chmod 600 /etc/secrets/mongodb-keyfile"
       volumes:
         - name: mongo-init-script
           configMap:
