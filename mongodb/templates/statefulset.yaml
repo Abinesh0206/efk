@@ -49,6 +49,8 @@ spec:
             - name: keyfile-secret
               mountPath: /etc/secrets
               readOnly: true
+            - name: mongo-init-script
+              mountPath: /docker-entrypoint-initdb.d
       volumes:
         - name: mongo-init-script
           configMap:
@@ -57,7 +59,6 @@ spec:
           secret:
             secretName: mongo-keyfile
             defaultMode: 0400
-
   volumeClaimTemplates:
     - metadata:
         name: mongo-persistent-storage
