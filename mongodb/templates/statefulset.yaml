@@ -2,8 +2,9 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: mongo
+  namespace: mongodb1
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: 3
   selector:
     matchLabels:
       app: mongo
@@ -16,19 +17,22 @@ spec:
       initContainers:
         - name: fix-keyfile-permissions
           image: busybox
-          command: ["sh", "-c", "cp /etc/secrets/mongodb-keyfile /mnt/keyfile && chmod 600 /mnt/keyfile && mv /mnt/keyfile /etc/secrets/mongodb-keyfile"]
-          securityContext:
-            privileged: true  # Allow initContainer to run with elevated privileges
+          command:
+            - sh
+            - -c
+            - |
+              cp /etc/secrets/mongodb-keyfile /mnt/mongodb-keyfile
+              chmod 600 /mnt/mongodb-keyfile
           volumeMounts:
             - name: keyfile-secret
               mountPath: /etc/secrets
-              readOnly: true  # The secret is still read-only
+              readOnly: true
             - name: temp-keyfile
-              mountPath: /mnt/keyfile  # Temporary location for the keyfile to modify
-              readOnly: false  # Allow write access here to change permissions
+              mountPath: /mnt
+
       containers:
         - name: mongo
-          image: {{ .Values.mongoImage }}
+          image: mongo:7.0.5
           args:
             - "--replSet"
             - "rs0"
@@ -52,11 +56,12 @@ spec:
           volumeMounts:
             - name: mongo-persistent-storage
               mountPath: /data/db
-            - name: keyfile-secret
+            - name: temp-keyfile
               mountPath: /etc/secrets
-              readOnly: true  # The secret is still mounted as read-only
+              readOnly: true
             - name: mongo-init-script
               mountPath: /docker-entrypoint-initdb.d
+
       volumes:
         - name: mongo-init-script
           configMap:
@@ -64,9 +69,10 @@ spec:
         - name: keyfile-secret
           secret:
             secretName: mongo-keyfile
-            defaultMode: 0600  # Ensure the secret has proper permissions
+            defaultMode: 0400  # Minimum required permissions
         - name: temp-keyfile
-          emptyDir: {}  # Temporary volume to work with keyfile
+          emptyDir: {}
+
   volumeClaimTemplates:
     - metadata:
         name: mongo-persistent-storage
