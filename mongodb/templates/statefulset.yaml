@@ -40,12 +40,13 @@ spec:
         - name: mongo-init-script
           configMap:
             name: mongo-init-script
+
   volumeClaimTemplates:
     - metadata:
         name: mongo-persistent-storage
-     spec:
+      spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: gp2  # or whatever your actual storage class is
+        storageClassName: gp2  # customize as needed
         resources:
           requests:
             storage: 10Gi
